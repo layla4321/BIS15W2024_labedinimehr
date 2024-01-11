@@ -1,0 +1,48 @@
+---
+title: "RMarkdown practice"
+output: html_document
+date: "2024-01-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Title
+### Title
+#### Title
+
+[BIS 15L Webpage](https://jmledford3115.github.io/datascibiol/).   
+[Joel Ledford](jmledford@ucdavis.edu)
+
+###### Title
+# Title
+
+title title 
+
+```{r}
+5+5
+```
+
+```{r}
+276357273*2
+```
+
+```{r}
+7-4
+```
+
+```{r}
+2536143/16
+```
+
+```{r}
+#install.packages("tidyverse")
+library("tidyverse")
+```
+
+```{r}
+ggplot(mtcars, aes(x = factor(cyl))) +
+    geom_bar()
+```
+
