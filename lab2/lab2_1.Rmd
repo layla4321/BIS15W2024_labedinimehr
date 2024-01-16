@@ -44,6 +44,10 @@ my_experiment <- sum(treatment, control)
 my_experiment
 ```
 
+```{r}
+treatment+control
+```
+
 ## Nomenclature
 We need to be careful about nomenclature when we write code. R allows us to give almost any name we want to an object, but there are exceptions. For example, we don't want to give a name to an object that is the same as a function in R.  
 ```{r eval=FALSE, include=TRUE}
@@ -55,21 +59,34 @@ We get an error here because `else` is a function in R. You also don't want to g
 ## Practice
 1. Create three new objects, `venom_GT`, `chiron`, and `veyron`. These are the fastest cars in the world. Assign each car to its top speed. The venom_GT can go 270, chiron is 261, and veyron is 268.  
 ```{r}
+venom_GT <- 270
+```
 
+```{r}
+veyron <- 268
+```
+
+```{r}
+Chiron <- 261
 ```
 
 2. Use arithmetic to calculate the mean top speed for the cars.
 ```{r}
-
+(270+261+268)/3
 ```
+
 
 3. Use the function `mean()` to calculate the mean top speed for the cars.
 ```{r}
-
+cars <- c(venom_GT, Chiron, veyron)
 ```
 
 ```{r}
+mean(cars)
+```
 
+```{r}
+mean(venom_GT, Chiron, veyron)
 ```
 
 ## Types of Data
@@ -85,6 +102,7 @@ my_complex <- 2+4i
 To find out what type of data you are working with, use the `class()` function. This is important because sometimes we will need to change the type of data to perform certain analyses.
 ```{r}
 class(my_numeric)
+class(my_integer)
 ```
 
 You can use the `is()` and `as()` functions to clarify or specify a type of data.
@@ -123,12 +141,23 @@ anyNA(my_missing)
 new_vector <- c(7, 6.2, 5, 9, NA, 4, 9.8, 7, 3, 2)
 ```
 
+```{r}
+y <- 30
+```
+
+```{r}
+z=30 #do not use
+q <- 42
+```
+
 2. As we did in homework 1, calculate the mean of `new_vector`.
 ```{r}
-
+mean(new_vector)
 ```
 
 3. How do you interpret this result? What does this mean about NAs?  
+
+You will have to calculate it in a different way. This means that NAs will will not be calculated with integers normally. So you will have to remove the NA's. 
 
 4. Recalculate the mean using the following code chunk. Why is the useful?  
 ```{r}
