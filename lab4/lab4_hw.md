@@ -5,7 +5,7 @@ date: "2024-01-25"
 output:
   html_document: 
     theme: spacelab
-    keep_md: true
+    keep_md: yes
 ---
 
 
@@ -233,7 +233,21 @@ table(homerange$taxon)
 **6. The species in `homerange` are also classified into trophic guilds. How many species are represented in each trophic guild.**  
 
 ```r
-filter(homerange, trophic.guild=="herbivore")
+table(homerange$trophic.guild)
+```
+
+```
+## 
+## carnivore herbivore 
+##       342       227
+```
+
+
+**7. Make two new data frames, one which is restricted to carnivores and another that is restricted to herbivores.**  
+
+```r
+herbivores <- filter(homerange, trophic.guild=="herbivore")
+herbivores
 ```
 
 ```
@@ -258,8 +272,10 @@ filter(homerange, trophic.guild=="herbivore")
 ## #   PPMR <dbl>, prey.size.reference <chr>
 ```
 
+
 ```r
-filter(homerange, trophic.guild=="carnivore")
+carnivores <- filter(homerange, trophic.guild=="carnivore")
+carnivores
 ```
 
 ```
@@ -284,13 +300,26 @@ filter(homerange, trophic.guild=="carnivore")
 ## #   PPMR <dbl>, prey.size.reference <chr>
 ```
 
-**7. Make two new data frames, one which is restricted to carnivores and another that is restricted to herbivores.**  
-
 
 **8. Do herbivores or carnivores have, on average, a larger `mean.hra.m2`? Remove any NAs from the data.**  
 
 
+```r
+mean(herbivores$mean.hra.m2, na.rm = T)
+```
 
+```
+## [1] 34137012
+```
+
+
+```r
+mean(carnivores$mean.hra.m2, na.rm = T)
+```
+
+```
+## [1] 13039918
+```
 
 **9. Make a new dataframe `owls` that is limited to the mean mass, log10 mass, family, genus, and species of owls in the database. Which is the smallest owl? What is its common name? Do a little bit of searching online to see what you can learn about this species and provide a link below** 
 

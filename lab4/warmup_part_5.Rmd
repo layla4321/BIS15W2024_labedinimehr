@@ -1,0 +1,42 @@
+---
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+fish <- read_csv("data/Gaeta_etal_CLC_data.csv")
+```
+## Transform 2 only include 2 variables: lakeid and length
+```{r}
+names(fish) 
+fish_length <- select(fish, "lakeid", "length")
+```
+
+## fitler data to only include sample from lake BO
+```{r}
+glimpse(fish)
+```
+
+```{r}
+BO <- filter(fish, lakeid == "BO")
+BO
+```
+## mean of fish bo length
+```{r}
+fish_bo <- filter(fish, lakeid == "BO") 
+```
+
+```{r}
+mean(fish_bo$length)
+```
+ ## or
+```{r}
+mean(BO$length)
+```
+
