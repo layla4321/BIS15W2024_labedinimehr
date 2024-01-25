@@ -11,7 +11,7 @@
 
 <meta name="author" content="Layla Abedinimehr" />
 
-<meta name="date" content="2024-01-24" />
+<meta name="date" content="2024-01-25" />
 
 <title>Lab 4 Homework</title>
 
@@ -376,7 +376,7 @@ display: none;
 
 <h1 class="title toc-ignore">Lab 4 Homework</h1>
 <h4 class="author">Layla Abedinimehr</h4>
-<h4 class="date">2024-01-24</h4>
+<h4 class="date">2024-01-25</h4>
 
 </div>
 
@@ -540,22 +540,13 @@ levels(order_factor)</code></pre>
 data frame? Make a new data frame <code>taxa</code> that is restricted
 to taxon, common name, class, order, family, genus,
 species.</strong></p>
-<pre class="r"><code>taxa &lt;- select(homerange,&quot;taxon&quot;, &quot;common.name&quot;, &quot;class&quot;, &quot;order&quot;, &quot;family&quot;, &quot;genus&quot;, &quot;species&quot; )
-taxa</code></pre>
-<pre><code>## # A tibble: 569 × 7
-##    taxon         common.name             class        order family genus species
-##    &lt;chr&gt;         &lt;chr&gt;                   &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  
-##  1 lake fishes   american eel            actinoptery… angu… angui… angu… rostra…
-##  2 river fishes  blacktail redhorse      actinoptery… cypr… catos… moxo… poecil…
-##  3 river fishes  central stoneroller     actinoptery… cypr… cypri… camp… anomal…
-##  4 river fishes  rosyside dace           actinoptery… cypr… cypri… clin… fundul…
-##  5 river fishes  longnose dace           actinoptery… cypr… cypri… rhin… catara…
-##  6 river fishes  muskellunge             actinoptery… esoc… esoci… esox  masqui…
-##  7 marine fishes pollack                 actinoptery… gadi… gadid… poll… pollac…
-##  8 marine fishes saithe                  actinoptery… gadi… gadid… poll… virens 
-##  9 marine fishes lined surgeonfish       actinoptery… perc… acant… acan… lineat…
-## 10 marine fishes orangespine unicornfish actinoptery… perc… acant… naso  litura…
-## # ℹ 559 more rows</code></pre>
+<pre class="r"><code>taxa &lt;- select(homerange,&quot;taxon&quot;, &quot;common.name&quot;, &quot;class&quot;, &quot;order&quot;, &quot;family&quot;, &quot;genus&quot;, &quot;species&quot;)
+table(homerange$taxon)</code></pre>
+<pre><code>## 
+##         birds   lake fishes       lizards       mammals marine fishes 
+##           140             9            11           238            90 
+##  river fishes        snakes     tortoises       turtles 
+##            14            41            12            14</code></pre>
 <p><strong>5. The variable <code>taxon</code> identifies the common name
 groups of the species represented in <code>homerange</code>. Make a
 table the shows the counts for each of these

@@ -58,8 +58,8 @@ levels(order_factor)
 
 **4. What taxa are represented in the `homerange` data frame? Make a new data frame `taxa` that is restricted to taxon, common name, class, order, family, genus, species.**  
 ```{r}
-taxa <- select(homerange,"taxon", "common.name", "class", "order", "family", "genus", "species" )
-taxa
+taxa <- select(homerange,"taxon", "common.name", "class", "order", "family", "genus", "species")
+table(homerange$taxon)
 ```
 
 **5. The variable `taxon` identifies the common name groups of the species represented in `homerange`. Make a table the shows the counts for each of these `taxon`.**  
