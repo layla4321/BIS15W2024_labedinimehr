@@ -1,0 +1,33 @@
+---
+title: "lab_4_warmup"
+output: html_document
+date: "2024-01-23"
+---
+```{r}
+library("tidyverse")
+library("palmerpenguins")
+```
+
+## 2. what are the dimensions of the penguin
+```{r}
+dim(penguins)
+```
+## 3. Names of penguins
+```{r}
+names(penguins)
+```
+## 4. How many individuals are sampled on the island
+```{r}
+table(penguins$island)
+```
+
+```{r}
+summary(penguins$island)
+```
+
+
+## 5. What is the mean 
+```{r}
+mean(penguins$body_mass_g, na.rm = T)
+```
+
