@@ -97,13 +97,18 @@ mean(carnivores$mean.hra.m2, na.rm = T)
 
 **9. Make a new dataframe `owls` that is limited to the mean mass, log10 mass, family, genus, and species of owls in the database. Which is the smallest owl? What is its common name? Do a little bit of searching online to see what you can learn about this species and provide a link below** 
 ```{r}
-
+owls <- select(homerange, c("mean.mass.g", "log10.mass", "common.name", "family", "genus", "species")) 
+owls <- filter(owls, endsWith(owls$common.name, "owl"))
+owls
 ```
+Eurasian pygmy owl [link](https://ebird.org/species/eupowl1)
 
 **10. As measured by the data, which bird species has the largest homerange? Show all of your work, please. Look this species up online and tell me about it!**.  
 ```{r}
-
+homerange %>% 
+  arrange(desc(mean.hra.m2))
 ```
+Tarandus which is the species name for reindeer. They live in cold areas such as the Tundra and Artic and their average lifespan is around 15 years!
 
 ## Push your final code to GitHub!
 Please be sure that you check the `keep md` file in the knit preferences.   

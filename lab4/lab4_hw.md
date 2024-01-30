@@ -1,7 +1,7 @@
 ---
 title: "Lab 4 Homework"
 author: "Layla Abedinimehr"
-date: "2024-01-25"
+date: "2024-01-29"
 output:
   html_document: 
     theme: spacelab
@@ -323,9 +323,57 @@ mean(carnivores$mean.hra.m2, na.rm = T)
 
 **9. Make a new dataframe `owls` that is limited to the mean mass, log10 mass, family, genus, and species of owls in the database. Which is the smallest owl? What is its common name? Do a little bit of searching online to see what you can learn about this species and provide a link below** 
 
+```r
+owls <- select(homerange, c("mean.mass.g", "log10.mass", "common.name", "family", "genus", "species")) 
+owls <- filter(owls, endsWith(owls$common.name, "owl"))
+owls
+```
+
+```
+## # A tibble: 9 × 6
+##   mean.mass.g log10.mass common.name        family    genus      species    
+##         <dbl>      <dbl> <chr>              <chr>     <chr>      <chr>      
+## 1       119         2.08 boreal owl         strigidae aegolius   funereus   
+## 2       252         2.40 long-eared owl     strigidae asio       otus       
+## 3       156.        2.19 little owl         strigidae athene     noctua     
+## 4      2191         3.34 Eurasian eagle-owl strigidae bubo       bubo       
+## 5      1510         3.18 great horned owl   strigidae bubo       virginianus
+## 6        61.3       1.79 Eurasian pygmy owl strigidae glaucidium passerinum 
+## 7      1920         3.28 snowy owl          strigidae nyctea     scandiaca  
+## 8       519         2.72 tawny owl          strigidae strix      aluco      
+## 9       285         2.45 barn owl           tytonidae tyto       alba
+```
+Eurasian pygmy owl [link](https://ebird.org/species/eupowl1)
 
 **10. As measured by the data, which bird species has the largest homerange? Show all of your work, please. Look this species up online and tell me about it!**.  
 
+```r
+homerange %>% 
+  arrange(desc(mean.hra.m2))
+```
+
+```
+## # A tibble: 569 × 24
+##    taxon   common.name      class order family genus species primarymethod N    
+##    <chr>   <chr>            <chr> <chr> <chr>  <chr> <chr>   <chr>         <chr>
+##  1 mammals reindeer         mamm… arti… cervi… rang… tarand… telemetry*    <NA> 
+##  2 mammals African bush el… mamm… prob… eleph… loxo… africa… telemetry*    <NA> 
+##  3 mammals greater kudu     mamm… arti… bovid… trag… streps… telemetry*    <NA> 
+##  4 mammals cheetah          mamm… carn… felid… acin… jubatus telemetry*    <NA> 
+##  5 mammals leopard          mamm… carn… felid… pant… pardus  telemetry*    <NA> 
+##  6 mammals caracal          mamm… carn… felid… cara… caracal telemetry*    <NA> 
+##  7 mammals wolverine        mamm… carn… muste… gulo  gulo    telemetry*    <NA> 
+##  8 mammals cougar           mamm… carn… felid… puma  concol… telemetry*    <NA> 
+##  9 mammals American bison   mamm… arti… bovid… bison bison   telemetry*    <NA> 
+## 10 birds   caracara         aves  falc… falco… cara… cheriw… telemetry     26   
+## # ℹ 559 more rows
+## # ℹ 15 more variables: mean.mass.g <dbl>, log10.mass <dbl>,
+## #   alternative.mass.reference <chr>, mean.hra.m2 <dbl>, log10.hra <dbl>,
+## #   hra.reference <chr>, realm <chr>, thermoregulation <chr>, locomotion <chr>,
+## #   trophic.guild <chr>, dimension <dbl>, preymass <dbl>, log10.preymass <dbl>,
+## #   PPMR <dbl>, prey.size.reference <chr>
+```
+Tarandus which is the species name for reindeer. They live in cold areas such as the Tundra and Artic and their average lifespan is around 15 years!
 
 ## Push your final code to GitHub!
 Please be sure that you check the `keep md` file in the knit preferences.   
