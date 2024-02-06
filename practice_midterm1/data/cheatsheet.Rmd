@@ -1,0 +1,527 @@
+---
+output: 
+  html_document: 
+    keep_md: true
+---
+ summarize()
+summarize() will produce summary statistics for a given variable in a data frame. For example, if you are asked to calculate the mean of sleep_total for large and small mammals you could do this using a combination of commands, but it isn’t very efficient or clean. We can do better!
+
+head(msleep)
+
+For example, if we define “large” as having a bodywt greater than 200 then we get the following:
+
+large <- msleep %>% 
+  select(name, genus, bodywt, sleep_total) %>% 
+  filter(bodywt > 200) %>% 
+  arrange(desc(bodywt))
+large
+
+mean(large$sleep_total)
+We can accomplish the same task using the summarize() function to make things cleaner.
+
+Large mammals
+
+msleep %>% 
+  filter(bodywt>200) %>% 
+  summarize(mean_sleep_lg=mean(sleep_total))
+  
+  Small mammals
+
+msleep %>% 
+  filter(bodywt<10)%>% 
+  summarize(mean_sleep_sm=mean(sleep_total))
+  
+  You can also combine functions to make useful summaries for multiple variables.
+
+msleep %>% 
+  filter(bodywt>200) %>% 
+  summarize(mean_sleep_lg=mean(sleep_total),
+            min_sleep_lg=min(sleep_total),
+            max_sleep_lg=max(sleep_total),
+            sd_sleep_lg=sd(sleep_total),
+            total=n())
+            
+  What is the mean, min, and max bodywt for the taxonomic order Primates? Provide the total number of observations.
+msleep %>% 
+  filter(order=="Primates") %>% 
+  summarize(mean_bodywt=mean(bodywt),
+            min_bodywt=min(bodywt),
+            max_bodywt=max(bodywt),
+            total=n())
+            
+    n_distinct() is a very handy way of cleanly presenting the number of distinct observations. Here we show the number of distinct genera over 100 in body weight.
+
+Notice that there are multiple genera with over 100 in body weight.
+
+msleep %>% 
+  filter(bodywt > 100)
+  
+n_distinct() is a very handy way of cleanly presenting the number of distinct observations. Here we show the number of distinct genera over 100 in body weight.
+
+msleep %>% 
+  filter(bodywt > 100) %>% 
+  summarize(n_genera=n_distinct(genus))
+  
+  How many genera are represented in the msleep data frame?
+msleep %>% 
+  summarize(n_genera=n_distinct(genus))
+  
+  Here is another option.
+
+msleep %>% 
+  tabyl(genus)
+
+group_by()
+The summarize() function is most useful when used in conjunction with group_by(). Although producing a summary of body weight for all of the mammals in the data set is helpful, what if we were interested in body weight by feeding ecology?
+
+msleep %>%
+  group_by(vore) %>% #we are grouping by feeding ecology, a categorical variable
+  summarize(min_bodywt = min(bodywt),
+            max_bodywt = max(bodywt),
+            mean_bodywt = mean(bodywt),
+            total=n())
+            
+            Calculate mean brain weight by taxonomic order in the msleep data.
+msleep %>% 
+  group_by(order) %>% 
+  summarize(mean_brain_wt=mean(brainwt))
+  
+  What does NA mean? How are NA’s being treated by the summarize function?
+msleep %>% 
+  filter(order=="Carnivora") %>% 
+  select(order, genus, brainwt)
+  
+  Try running the code again, but this time add na.rm=TRUE. What is the problem with Cetacea? Compare this to Carnivora. NaN is a special value that is returned when a mathematical operation is undefined. In this case, the mean of a column with NA’s is undefined.
+msleep %>% 
+  group_by(order) %>% 
+  summarize(mean_brain_wt=mean(brainwt, na.rm=T))
+  
+  msleep %>% 
+  filter(order=="Cetacea") %>% 
+  select(order, genus, brainwt)
+
+
+Load the data into a new object called `homerange`.**
+```{r}
+homerange <- readr::read_csv("data/Tamburelloetal_HomeRangeDatabase.csv")
+homerange
+```
+
+#Change the class of the variables `taxon` and `order` to factors and display their levels.**  
+```{r}
+taxon_factor <- factor(homerange$taxon)
+levels(taxon_factor)
+```
+
+```{r}
+mutate(variable_name=as.factor(variable_name))
+```
+
+##PRACTICE MIDTERM 
+---
+title: "Midterm 1"
+author: "Please Add Your Name Here"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: spacelab
+    toc: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Instructions
+Answer the following questions and complete the exercises in RMarkdown. Please embed all of your code and push your final work to your repository. Your code should be organized, clean, and run free from errors. Remember, you must remove the `#` for any included code chunks to run. Be sure to add your name to the author header above. You may use any resources to answer these questions, but you may not post questions to Open Stacks or external help sites. There are 15 total questions, each is worth 2 points.  
+
+Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  
+
+## Load the tidyverse
+If you plan to use any other libraries to complete this assignment then you should load them here.
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+## Questions  
+
+Wikipedia's definition of [data science](https://en.wikipedia.org/wiki/Data_science): "Data science is an interdisciplinary field that uses scientific methods, processes, algorithms and systems to extract knowledge and insights from noisy, structured and unstructured data, and apply knowledge and actionable insights from data across a broad range of application domains."  
+
+1. (2 points) Consider the definition of data science above. Although we are only part-way through the quarter, what specific elements of data science do you feel we have practiced? Provide at least one specific example.  
+
+2. (2 points) What is the most helpful or interesting thing you have learned so far in BIS 15L? What is something that you think needs more work or practice?  
+
+In the midterm 1 folder there is a second folder called `data`. Inside the `data` folder, there is a .csv file called `ElephantsMF`. These data are from Phyllis Lee, Stirling University, and are related to Lee, P., et al. (2013), "Enduring consequences of early experiences: 40-year effects on survival and success among African elephants (Loxodonta africana)," Biology Letters, 9: 20130011. [kaggle](https://www.kaggle.com/mostafaelseidy/elephantsmf).  
+
+3. (2 points) Please load these data as a new object called `elephants`. Use the function(s) of your choice to get an idea of the structure of the data. Be sure to show the class of each variable.
+```{r}
+elephants <- readr::read_csv(file="data/ElephantsMF.csv")
+```
+
+```{r}
+glimpse(elephants)
+```
+
+4. (2 points) Change the names of the variables to lower case and change the class of the variable `sex` to a factor.
+```{r}
+elephants <- janitor::clean_names(elephants)
+```
+
+```{r}
+elephants$sex <- as.factor(elephants$sex)
+```
+
+5. (2 points) How many male and female elephants are represented in the data?
+```{r}
+elephants %>% 
+  count(sex)
+```
+
+6. (2 points) What is the average age all elephants in the data?
+```{r}
+elephants %>% 
+  summarize(mean_age=mean(age))
+```
+
+7. (2 points) How does the average age and height of elephants compare by sex?
+```{r}
+elephants %>% 
+  group_by(sex) %>% 
+  summarise(mean_age=mean(age),
+            mean_height=mean(height))
+```
+
+8. (2 points) How does the average height of elephants compare by sex for individuals over 20 years old. Include the min and max height as well as the number of individuals in the sample as part of your analysis.  
+```{r}
+elephants %>% 
+  filter(age>20) %>% 
+  group_by(sex) %>% 
+  summarise(min_height=min(height),
+            max_height=max(height),
+            mean_height=mean(height),
+            n_elephants=n())
+```
+
+For the next series of questions, we will use data from a study on vertebrate community composition and impacts from defaunation in [Gabon, Africa](https://en.wikipedia.org/wiki/Gabon). One thing to notice is that the data include 24 separate transects. Each transect represents a path through different forest management areas.  
+
+Reference: Koerner SE, Poulsen JR, Blanchard EJ, Okouyi J, Clark CJ. Vertebrate community composition and diversity declines along a defaunation gradient radiating from rural villages in Gabon. _Journal of Applied Ecology_. 2016. This paper, along with a description of the variables is included inside the midterm 1 folder.  
+
+9. (2 points) Load `IvindoData_DryadVersion.csv` and use the function(s) of your choice to get an idea of the overall structure. Change the variables `HuntCat` and `LandUse` to factors.
+```{r}
+gabon <- readr::read_csv("data/IvindoData_DryadVersion.csv")
+```
+
+```{r}
+gabon <- gabon %>% 
+  mutate_if(is.character, factor)
+```
+
+10. (4 points) For the transects with high and moderate hunting intensity, how does the average diversity of birds and mammals compare?
+```{r}
+gabon %>% 
+  filter(HuntCat=="High") %>% 
+  summarise(mean_bird_diversity=mean(Diversity_BirdSpecies),
+            mean_mammal_diversity=mean(Diversity_MammalSpecies),
+            nsamples=n())
+```
+
+```{r}
+gabon %>% 
+  filter(HuntCat=="Moderate") %>% 
+  summarise(mean_bird_diversity=mean(Diversity_BirdSpecies),
+            mean_mammal_diversity=mean(Diversity_MammalSpecies),
+            nsamples=n())
+```
+
+```{r}
+names(gabon)
+```
+
+11. (4 points) One of the conclusions in the study is that the relative abundance of animals drops off the closer you get to a village. Let's try to reconstruct this (without the statistics). How does the relative abundance (RA) of apes, birds, elephants, monkeys, rodents, and ungulates compare between sites that are less than 3km from a village to sites that are greater than 25km from a village? The variable `Distance` measures the distance of the transect from the nearest village. Hint: try using the `across` operator.  
+
+Close
+```{r}
+gabon %>% 
+  filter(Distance<3) %>% 
+  summarise(across(contains("RA_"), mean))
+```
+
+Far
+```{r}
+gabon %>% 
+  filter(Distance>25) %>% 
+  summarise(across(contains("RA_"), mean))
+```
+
+12. (4 points) Based on your interest, do one exploratory analysis on the `gabon` data of your choice. This analysis needs to include a minimum of two functions in `dplyr.`
+
+##Setup
+First, install and load the required packages.
+```R
+install.packages('tidyverse')
+install.packages('janitor')
+install.packages(‘dplyr’)
+library(tidyverse)
+library(janitor)
+library(dplyr)
+```
+NOTE: If you have loaded the library, you can just call its functions. But if you haven’t and want to use a particular function in that package, you can use :: for example skimr::skim(df)
+Change Working Directory:
+ 
+Session > Set Working Directory > Choose Directory.
+Variables in R
+- Definition: Variables store data of various types: numeric, character, logical, or complex.
+• How to Assign variables
+ x <- 10  # Numeric
+ name <- "Data Science"  # Character
+ my_vector <- c(10, 20, 30)#Vector
+my_matrix <- matrix(data = c(1, 2, 3, 4, 5, 6), nrow = 2, ncol = 3, byrow = TRUE) #matrix
+ 
+class(my_data) #Gives you the class (type) of the variable whether it is numeric, character, Boolean, etc
+ 
+Matrix Manipulation
+ 
+Summed <- rowSums(my_matrix) #Sums all the numeric values in the row
+ 
+All_my_matrix <- cbind(my_matrix, Summed) #Adds a column summed to the matrix
+total_summed <- colSums(all_my_matrix) #Sums all the numeric values in the column
+rbind(all_my_matrix, total_summed) #Add a row to the end of the matrix called total_summed
+my_matrix[1:4] #Select the columns 1 through 4 in my_matrix
+ 
+ 
+Data Frame Manipulation
+ 
+df <- data.frame(Name = c('Alice', 'Bob', 'Charlie'), Age = c(24, 27, 30), Gender = c('F', 'M', 'M')) #Create Data Frame
+
+df$Name # Access the 'Name' column
+
+df[1,] # Access the first row
+
+df$NewColumn <- c(1, 2, 3) # Add a new column
+
+names(df)[1] <- 'FirstName' # Rename 'Name' to 'FirstName'
+
+df <- df %>% filter(Age > 25) %>% arrange(desc(Age)) # Filter and arrange
+
+new_row <- data.frame(column_name1 = 'value1', column_name2 = value2) #add rows (1st create a row)
+data <- bind_rows(data, new_row) #add row continued
+
+df$column <- as.factor(df$column) #Turns the column of the data frame df into a factor
+
+Loading and writing Data
+Load data from a CSV file into a data frame. Ensure you have a CSV file named 'data.csv'.
+```R
+data <- read.csv('path/data.csv') #path is the subdirectory where data is. Data.csv is the name of the datafile
+write.csv(data, "data.csv", row.names = FALSE) #write data to a file if you want to write to a directory then instead of “data.csv” you can write “path/data.csv” where path is the name of directory
+
+```
+Data Cleaning
+Clean column names for better readability and consistency.
+```R
+data <- data %>% clean_names()
+```
+Accessing DataFrame Elements
+Access specific columns and rows using dplyr's select and filter.
+```R
+selected_data <- data %>% select(column_name1, column_name2)
+filtered_data <- data %>% filter(column_name == 'value')
+filter(df, column1 == "AL" | col2 > 350) # filtering based on 2 conditions. The ‘|’ means OR. If you want and, then you use & instead.
+skim(sample_data) #Summerize the data frame showing number of rows, columns, etc.
+
+```
+Data Manipulation
+Use mutate to add or modify columns, and factor for handling categorical data.
+```R
+data <- data %>%
+ mutate(new_column = column_name1 * column_name2,
+        category = factor(category_column))
+```Grouping and Summarizing
+Group data by one or more columns and summarize it.
+```R
+summary_data <- data %>%
+ group_by(group_column) %>%
+ summarize(mean_value = mean(numeric_column, na.rm = TRUE))
+Col_freq <- tabyl(df,col1)  #Tabyl, gets the frequency distribution of a column value in a data frame
+If a column in the data frame is a factor, you can get a count of its different categories using:
+df %>%
+ count(sex) #The sex column is a factor, and you can get the count of its different values (m/f)
+ 
+grouped_summary <- your_data_frame %>% group_by(grouping_column) %>% summarize(SummaryStat = some_function(target_column)) #General group by. Note the some_function is a function in R like mean, max, sum
+summary_result <- your_data_frame %>% summarize(SummaryStat = some_function(target_column)) # General summerizey. Note the some_function is a function in R like mean, max, sum
+Note: You can use the n() function within groups or filters to count the number of results. For example:
+observation_counts <- data_frame %>%
+ group_by(category_column) %>%
+ summarize(Count = n())
+
+```
+Sorting Ascending and Descending
+Sort data by a column
+```R
+# Sorting data in ascending order by age
+df_sorted_ascending <- arrange(df, age)
+ 
+# Sorting data in descending order by age
+df_sorted_descending <- arrange(df, desc(age))
+```
+Conditional Logic
+Implement if/else logic with dplyr's mutate and case_when.
+```R
+data <- data %>%
+ mutate(condition_column = case_when(
+   numeric_column > threshold ~ 'Above',
+   TRUE ~ 'Below'
+ ))
+```
+Data Cleansing (Lab 6)
+ 
+df<- clean_names(df) #Clean the names of the columns. If there is a space between names, replace the space with underscore
+
+##LAST HW
+---
+title: "Lab 7 Homework"
+author: "Layla Abedinimehr"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    theme: spacelab
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Instructions
+Answer the following questions and complete the exercises in RMarkdown. Please embed all of your code and push your final work to your repository. Your final lab report should be organized, clean, and run free from errors. Remember, you must remove the `#` for the included code chunks to run. Be sure to add your name to the author header above.  
+
+Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(skimr)
+```
+
+For this assignment we are going to work with a large data set from the [United Nations Food and Agriculture Organization](http://www.fao.org/about/en/) on world fisheries. These data are pretty wild, so we need to do some cleaning. First, load the data.  
+
+Load the data `FAO_1950to2012_111914.csv` as a new object titled `fisheries`.
+```{r}
+fisheries <- readr::read_csv(file = "data/FAO_1950to2012_111914.csv")
+```
+
+1. Do an exploratory analysis of the data (your choice). What are the names of the variables, what are the dimensions, are there any NA's, what are the classes of the variables?  
+```{r}
+dim(fisheries)
+```
+
+```{r}
+head(fisheries)
+```
+
+```{r}
+tail(fisheries)
+```
+
+```{r}
+str(fisheries)
+```
+
+2. Use `janitor` to rename the columns and make them easier to use. As part of this cleaning step, change `country`, `isscaap_group_number`, `asfis_species_number`, and `fao_major_fishing_area` to data class factor. 
+```{r}
+fisheries <- clean_names(fisheries)
+```
+
+```{r}
+fisheries %>%
+  mutate(across(c(country, isscaap_group_number, asfis_species_number, fao_major_fishing_area), as_factor))
+```
+
+We need to deal with the years because they are being treated as characters and start with an X. We also have the problem that the column names that are years actually represent data. We haven't discussed tidy data yet, so here is some help. You should run this ugly chunk to transform the data for the rest of the homework. It will only work if you have used janitor to rename the variables in question 2!  
+```{r}
+fisheries_tidy <- fisheries %>% 
+pivot_longer(-c(country,common_name,isscaap_group_number,isscaap_taxonomic_group,asfis_species_number,asfis_species_name,fao_major_fishing_area,measure),
+              names_to = "year",
+              values_to = "catch",
+               values_drop_na = TRUE) %>% 
+ mutate(year= as.numeric(str_replace(year, 'x', ''))) %>% 
+  mutate(catch= str_replace(catch, c(' F'), replacement = '')) %>% 
+ mutate(catch= str_replace(catch, c('...'), replacement = '')) %>% 
+  mutate(catch= str_replace(catch, c('-'), replacement = '')) %>% 
+  mutate(catch= str_replace(catch, c('0 0'), replacement = ''))
+
+fisheries_tidy$catch <- as.numeric(fisheries_tidy$catch)
+```
+
+3. How many countries are represented in the data? Provide a count and list their names.
+```{r}
+fisheries_tidy %>% 
+  summarize(ncountires = n_distinct(country))
+```
+
+```{r}
+unique(fisheries_tidy$country)
+```
+
+4. Refocus the data only to include country, isscaap_taxonomic_group, asfis_species_name, asfis_species_number, year, catch.
+```{r}
+fishers_new <- fisheries_tidy %>%
+  select(country, isscaap_taxonomic_group, asfis_species_name, asfis_species_number, year, catch)
+fishers_new
+```
+
+5. Based on the asfis_species_number, how many distinct fish species were caught as part of these data?
+```{r}
+fishers_new %>% 
+  summarize(n_taxa=n_distinct(asfis_species_number))
+```
+
+6. Which country had the largest overall catch in the year 2000?
+```{r}
+fisheries_tidy %>% 
+  filter(year==2000) %>%
+  group_by(country) %>% 
+  summarize(catch_total=sum(catch, na.rm=T)) %>% 
+  arrange(desc(catch_total))
+```
+
+7. Which country caught the most sardines (_Sardina pilchardus_) between the years 1990-2000?
+```{r}
+fisheries_tidy %>%
+  filter(asfis_species_name== "Sardina pilchardus") %>%
+  filter(year>=1990 & year<=2000) %>%
+  group_by(country) %>%
+  summarize(catch_total=sum(catch, na.rm=T)) %>%
+  arrange(desc(catch_total))
+```
+
+8. Which five countries caught the most cephalopods between 2008-2012?
+```{r}
+fishers_new %>%
+  filter(str_detect(isscaap_taxonomic_group, "Squids"))%>%
+  filter(year>=2008 & year<=2012) %>%
+  group_by(country) %>% 
+  summarize(catch_total=sum(catch, na.rm=T)) %>% 
+  arrange(desc(catch_total))
+```
+
+9. Which species had the highest catch total between 2008-2012? (hint: Osteichthyes is not a species)
+```{r}
+fishers_new %>%
+  filter(year>=2008 & year>=2012) %>%
+  group_by(asfis_species_name) %>% 
+  summarize(catch_total=sum(catch, na.rm=T)) %>%
+   arrange(desc(catch_total))
+```
+
+10. Use the data to do at least one analysis of your choice.
+```{r}
+fishers_new %>%
+  group_by(asfis_species_name) %>% 
+  summarize(catch_total=mean(catch, na.rm=T)) %>%
+   arrange(desc(catch_total))
+```
+
+## Push your final code to GitHub!
+Please be sure that you check the `keep md` file in the knit preferences.   
