@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output:
   html_document: 
     theme: spacelab
-    keep_md: yes
+    keep_md: true
 ---
 
 ```{r setup, include=FALSE}
@@ -21,6 +21,7 @@ Make sure to use the formatting conventions of RMarkdown to make your report nea
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(janitor)
+library(dplyr)
 ``` 
 
 ## Install `here`
@@ -51,7 +52,7 @@ sydneybeaches <-read_csv(here("lab9", "data", "sydneybeaches.csv")) %>% clean_na
 
 2. Are these data "tidy" per the definitions of the tidyverse? How do you know? Are they in wide or long format?
 
-long format ?????
+Its tidy because each row contains an observation for each date. It is also long format for this reason. If it was wide, then you may have had the date column repeated like date1, date2, etc with that observation in that column and there are not multiple columns representing each variable. 
 
 3. We are only interested in the variables site, date, and enterococci_cfu_100ml. Make a new object focused on these variables only. Name the object `sydneybeaches_long`
 ```{r}
@@ -80,24 +81,33 @@ sydney_beaches_wide %>%
 
 6. We haven't dealt much with dates yet, but separate the date into columns day, month, and year. Do this on the `sydneybeaches_long` data.
 ```{r}
-sydneybeaches_long %>%
+sydneybeaches_long <- sydneybeaches_long %>%
   separate(date, into=c("day", "month", "year"), sep="/")  
 ```
 
 
 7. What is the average `enterococci_cfu_100ml` by year for each beach. Think about which data you will use- long or wide.
 ```{r}
-
+average_enterococci_by_year <- sydneybeaches_long %>%
+  group_by(site, year) %>%
+  summarise(average_enterococci = mean(enterococci_cfu_100ml, na.rm = TRUE))
+average_enterococci_by_year
 ```
 
 8. Make the output from question 7 easier to read by pivoting it to wide format.
 ```{r}
-
+average_enterococci_by_year_wide <- average_enterococci_by_year %>%
+  pivot_wider(names_from = year, values_from = average_enterococci)
+average_enterococci_by_year_wide
 ```
 
 9. What was the most polluted beach in 2013?
 ```{r}
-
+most_polluted_beach_in_2013 <- average_enterococci_by_year %>%
+  filter(year == "2013") %>% 
+  arrange(desc(average_enterococci)) %>%
+  top_n(1, average_enterococci)
+most_polluted_beach_in_2013
 ```
 
 10. Please complete the class project survey at: [BIS 15L Group Project](https://forms.gle/H2j69Z3ZtbLH3efW6)
