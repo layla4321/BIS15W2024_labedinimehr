@@ -1,0 +1,713 @@
+---
+output:
+  html_document:
+    keep_md: true
+---
+Check Dataset for being Tidy
+
+A dataset is tidy when each observation is in a row, and each column has a variable (not a value). For example, the following is NOT tidy, because the years 2005, 2006, 2007 which are columns are the value and not a variable.
+
+---
+#The first function we will use is ggplot(). This function allows us to define the data that we will be using to make the plot, as well as the aesthetic properties that will be mapped to the geometric objects. That is, we will tell ggplot which data (a data frame) we are interested in and how each of the variables in our dataset will be used (e.g. as an x or y coordinate, as a coloring variable or a size variable, etc).
+
+#Below, we define our first ggplot object using the ggplot function, with the gapminder dataset and the x and y aesthetics defined by the gdpPercap and lifeExp variables, respectively.
+
+The output of this function is a grid with gdpPercap as the x-axis and lifeExp as the y-axis. However, we have not yet told ggplot what type of geometric object the data will be mapped to, so no data has been displayed.
+
+ggplot(gapminder, aes(x = gdpPercap, y = lifeExp))
+
+Aesthetic mapping to layers
+Next, we will add a “geom” layer to our ggplot object. For example, we could add a points layer which would automatically adopt the aesthetic mapping described in the previous line of code.
+
+# describe the base ggplot object and tell it what data we are interested in along with the aesthetic mapping
+ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) +
+  # add a points layer on top
+  geom_point()
+ 
+  What we have done is map each country (row) in the data to a point in the space defined by the GDP and life expectancy value. The end result is an ugly blob of points. Fortunately, there are many things that we can do to make this blob of points prettier.
+
+For example, we can change the transparency of all points by setting the alpha argument to a low value, changing the color of the points to be blue instead of black, and making the points smaller.
+
+ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(alpha = 0.5, col = "cornflowerblue", size =
+ 
+  Note that the above argument changed the alpha value and color for all of the points at once.
+
+One of the truly powerful features of ggplot2 is the ability to change these aesthetics based on the data itself. For example, perhaps we want to color each point by its continent. Instead of separating the data into five different subsets (based on the possible values of continent), and adding the different colored points separately, we can simply add all the points once and add an colour aesthetic map for continent.
+
+Note that whenever we are using a variable from the data to describe an aesthetic property of a geom, this aesthetic property needs to be included in the aes() function.
+
+unique(gapminder$continent)
+
+We could also add aesthetic mappings for other features such as shape, size, transparency (alpha), and more! For example, changing the size based on population:
+
+ggplot(gapminder, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
+  geom_point(alpha = 0.5)
+ 
+  So far, we have only seen scatterplots (point geoms), however, there are many other geoms we could add, including:
+
+lines
+
+histograms
+
+boxplots and violin plots
+
+barplots
+
+smoothed curves
+
+ggplot(gapminder, aes(x = year, y = lifeExp, group = country, color = continent)) +
+  geom_line(alpha = 0.5)
+ 
+  ---ggplot(gapminder, aes(x = continent, y = lifeExp, fill = continent)) +
+  geom_boxplot()
+
+--ggplot(gapminder, aes(x = lifeExp)) +
+  geom_histogram(binwidth = 3)
+ 
+  ggplot(gapminder, aes(x = gdpPercap, y = lifeExp, size = pop)) +
+  geom_point(aes(color = continent), alpha = 0.5) +
+  geom_smooth(se = FALSE, method = "loess", color = "grey30")
+
+Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.
+`geom_smooth()` using formula = 'y ~ x'
+Warning: The following aesthetics were dropped during statistical transformation: size
+ℹ This can happen when ggplot fails to infer the correct grouping structure in
+  the data.
+ℹ Did you forget to specify a `group` aesthetic or to convert a numerical
+  variable into a factor?
+ 
+  We are going to return to our original scatterplot example to discuss scales, legend and positioning.
+
+To remind you, this scatterplot showed GDP per capita against life expectancy for each country colored by continent and sized by population.
+
+To keep things simple, let’s filter to a single year.
+
+library(dplyr)
+gapminder_2007 <- gapminder %>% filter(year == 2007)
+
+ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
+  geom_point(alpha = 0.5)
+ 
+  The scale of a plot describes the features of the space in which it is plotted. Arguably, it would be better to show gdpPercap on a logarithmic scale, rather than in its raw form. Fortunately, this is easy to do using a scale function, which can be considered another layer that transforms our plot.
+
+ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
+  geom_point(alpha = 0.5) +
+  scale_x_log10()
+ 
+  The default x- (and y-) axes scales are scale_x_continuous and scale_y_continuous, but other options include scale_x_sqrt and scale_x_reverse.
+
+Each of these scale functions has many options including changing the limits, the breaks, etc. For example in the plot below, we manipulate the x-axis by providing arguments to our scale function of choice.
+
+ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
+  geom_point(alpha = 0.5) +
+  # clean the x-axis breaks
+  scale_x_log10(breaks = c(1, 10, 100, 1000, 10000),
+                limits = c(1, 120000))
+       
+        The scale of a plot describes the features of the space in which it is plotted. Arguably, it would be better to show gdpPercap on a logarithmic scale, rather than in its raw form. Fortunately, this is easy to do using a scale function, which can be considered another layer that transforms our plot.
+
+ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
+  geom_point(alpha = 0.5) +
+  scale_x_log10()    
+ 
+  The default x- (and y-) axes scales are scale_x_continuous and scale_y_continuous, but other options include scale_x_sqrt and scale_x_reverse.
+
+Each of these scale functions has many options including changing the limits, the breaks, etc. For example in the plot below, we manipulate the x-axis by providing arguments to our scale function of choice.
+
+ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
+  geom_point(alpha = 0.5) +
+  # clean the x-axis breaks
+  scale_x_log10(breaks = c(1, 10, 100, 1000, 10000),
+                limits = c(1, 120000))
+               
+               
+ 
+        Notice that we changed the name of the x-axis in the plot using the name argument. This could also be done using the labs function. As an example, below we add a title and change the name of the y-axis and legends using the labs function.
+
+ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
+  # add scatter points
+  geom_point(alpha = 0.5) +
+  # log-scale the x-axis
+  scale_x_log10() +
+  # change labels
+  labs(title = "GDP versus life expectancy in 2007",
+       x = "GDP per capita (log scale)",
+       y = "Life expectancy",
+       size = "Popoulation",
+       color = "Continent")
+       
+       
+       We could also manipulate the scale of the size variable. Below, we expand the range of sizes and clean up the variable name. Since the variable we provided for size is a continuous variable (pop) we use the scale_size_continuous argument.
+
+ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
+  # add scatter points
+  geom_point(alpha = 0.5) +
+  # log-scale the x-axis
+  scale_x_log10() +
+  # change labels
+  labs(title = "GDP versus life expectancy in 2007",
+       x = "GDP per capita (log scale)",
+       y = "Life expectancy",
+       size = "Popoulation (millions)",
+       color = "Continent") +
+  # change the size scale
+  scale_size(range = c(0.1, 10),
+             breaks = 1000000 * c(250, 500, 750, 1000, 1250),
+             labels = c("250", "500", "750", "1000", "12
+             
+             
+             
+###Faceting
+Sometimes we want to be able to make multiple plots of the same thing across different categories. This can be achieved with minimal repetition using faceting.
+
+In the example below, we will remake the plot above individually for each continent.
+
+ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
+  # add scatter points
+  geom_point(alpha = 0.5) +
+  # log-scale the x-axis
+  scale_x_log10() +
+  # change labels
+  labs(title = "GDP versus life expectancy in 2007",
+       x = "GDP per capita (log scale)",
+       y = "Life expectancy",
+       size = "Popoulation (millions)",
+       color = "Continent") +
+  # change the size scale
+  scale_size(range = c(0.1, 10),
+             breaks = 1000000 * c(250, 500, 750, 1000, 1250),
+             labels = c("250", "500", "750", "1000", "1250")) +
+  # add faceting
+  facet_wrap(~continent)  
+
+###Themes: making even more beautiful figures with ggplot2
+One of the first things I usually do when I make a ggplot is edit the default theme. I actually really don’t like the grey background, nor do I like having a grid unless it really helps with the plot interpretation.
+
+One of the simplest themes is theme_classic, however there are several other themes to choose from. The ggthemes package offers many additional themes, but you could also make your own using the theme() function.
+
+ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
+  # add scatter points
+  geom_point(alpha = 0.5) +
+  # clean the axes names and breaks
+  scale_x_log10(breaks = c(1000, 10000),
+                limits = c(200, 120000)) +
+  # change labels
+  labs(title = "GDP versus life expectancy in 2007",
+       x = "GDP per capita (log scale)",
+       y = "Life expectancy",
+       size = "Popoulation (millions)",
+       color = "Continent") +
+  # change the size scale
+  scale_size(range = c(0.1, 10),
+             breaks = 1000000 * c(250, 500, 750, 1000, 1250),
+             labels = c("250", "500", "750", "1000", "1250")) +
+  # add a nicer theme
+  theme_classic(base_family = "Avenir")
+               
+###As an example of further customization of the ggplot theme, below we do the following:
+
+move the legend to the top (set legend.position = "top" in theme())
+removing the population legend (set guide = "none" in scale_size())
+remove the axes lines (set axis.line = element_blank() in theme())
+add some text annotations (add geom_text layer)
+ggplot(gapminder_2007) +
+  # add scatter points
+  geom_point(aes(x = gdpPercap, y = lifeExp, color = continent, size = pop),
+             alpha = 0.5) +
+  # add some text annotations for the very large countries
+  geom_text(aes(x = gdpPercap, y = lifeExp + 3, label = country),
+            color = "grey50",
+            data = filter(gapminder_2007, pop > 1000000000 | country %in% c("Nigeria", "United States"))) +
+  # clean the axes names and breaks
+  scale_x_log10(limits = c(200, 60000)) +
+  # change labels
+  labs(title = "GDP versus life expectancy in 2007",
+       x = "GDP per capita (log scale)",
+       y = "Life expectancy",
+       size = "Popoulation",
+       color = "Continent") +
+  # change the size scale
+  scale_size(range = c(0.1, 10),
+             # remove size legend
+             guide = "none") +
+  # add a nicer theme
+  theme_classic() +
+  # place legend at top and grey axis lines
+  theme(legend.position = "top",
+        axis.line = element_line(color = "grey85"),
+        axis.ticks = element_line(color = "grey85"))
+       
+       
+###Saving your plots
+You can save your plots using the ggsave() function.
+
+p <- ggplot(gapminder_2007) +
+  # add scatter points
+  geom_point(aes(x = gdpPercap, y = lifeExp, color = continent, size = pop),
+             alpha = 0.5) +
+  # add some text annotations for the very large countries
+  geom_text(aes(x = gdpPercap, y = lifeExp + 3, label = country),
+            color = "grey50",
+            data = filter(gapminder_2007, pop > 1000000000 | country %in% c("Nigeria", "United States"))) +
+  # clean the axes names and breaks
+  scale_x_log10(limits = c(200, 60000)) +
+  # change labels
+  labs(title = "GDP versus life expectancy in 2007",
+       x = "GDP per capita (log scale)",
+       y = "Life expectancy",
+       size = "Popoulation",
+       color = "Continent") +
+  # change the size scale
+  scale_size(range = c(0.1, 10),
+             # remove size legend
+             guide = "none") +
+  # add a nicer theme
+  theme_classic() +
+  # place legend at top and grey axis lines
+  theme(legend.position = "top",
+        axis.line = element_line(color = "grey85"),
+        axis.ticks = element_line(color = "grey85"))
+
+ggsave("beautiful_plot.png", p, dpi = 300, width = 6, height = 4)    
+
+---
+
+List of number of trees in California by Location by Year
+Location Plant Name Count_2005 Count_2006 Count_2007
+Danville Oak tree 100 120 222
+San Ramon Sequoia 50 10 22
+Pleasanton Oak tree 24 17 88
+Alamo Oak tree NA 3 22
+
+The above data is an example of WIDE data. However, the following is tidy or LONG:
+
+
+Location Plant Name Year Count
+Danville Oak tree 2005 100
+Danville Oak tree 2006 120
+San Ramon Sequoia 2005 50
+Pleasanton Oak tree 2005 24
+Alamo Oak tree 2005 NA
+
+
+Here is how you can change the WIDE data to long assuming that the wide data set is called ‘wide_data’:
+
+long_data <- pivot_longer(
+  wide_data,
+  cols = starts_with("Count"),
+  names_to = "Year",
+  names_prefix = "Count_",
+  values_to = "Count"
+)
+
+And if you want to convert back to wide again
+wide_data_again <- pivot_wider(
+  long_data,
+  names_from = "Year",
+  names_prefix = "Count_",
+  values_from = "Count"
+)
+How to add a row to a dataset
+
+Use rbind. Example:
+new_df <- rbind(new_bird <- c("female", 3.6, 3.9)
+hbirds<- rbind(hbirds, new_df)
+
+
+Add a new column
+
+Use cbind. Example:
+
+depth_ft <- c(4.15, 4.13, 4.12, 3.21, 3.23, 3.20, 5.67, 5.65, 5.66)
+hsprings <- cbind(hsprings, depth_ft)
+If you want to choose a column:
+
+Assume the dataset is called df:
+
+select(df, contains("col"))
+Here we are selecting all columns whose name has “col” in it
+select_if(df, is.numeric)
+Here we are selecting all columns that are numeric
+
+select_if(df, ~!is.numeric(.))
+Here we are selecting all columns that are NOT numeric. Note ! that means not but you have to add ~ as well
+
+
+1. Trend Analysis of Life Expectancy Over Time for Each Continent
+This analysis will reveal how life expectancy has changed over the years across different continents.
+
+Approach:
+Group data by continent and year.
+Calculate the average life expectancy for each continent per year.
+Plot the trends over time.
+
+
+library(ggplot2)
+library(dplyr)
+ 
+gapminder %>%
+  group_by(continent, year) %>%
+  summarise(average_lifeExp = mean(lifeExp, na.rm = TRUE)) %>%
+  ggplot(aes(x = year, y = average_lifeExp, color = continent)) +
+  geom_line() +
+  labs(title = "Life Expectancy Trends by Continent", x = "Year", y = "Average Life Expectancy") +
+  theme_minimal()
+
+
+2. Analysis of GDP per Capita and Life Expectancy
+Investigate the relationship between GDP per capita and life expectancy, which can indicate how economic prosperity relates to health outcomes.
+
+Approach:
+Create a scatter plot with GDP per capita on the x-axis and life expectancy on the y-axis.
+Color-code data points by continent to observe regional differences.
+Optionally, use data from a specific year or range of years for clearer visualization.
+
+gapminder %>%
+  filter(year == 2007) %>%
+  ggplot(aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point(alpha = 0.5) +
+  scale_x_log10() +  # GDP per capita values are skewed, so log scale is used for better visualization
+  labs(title = "Life Expectancy vs. GDP per Capita in 2007", x = "GDP per Capita (Log Scale)", y = "Life Expectancy") +
+  theme_minimal()
+
+
+3. Population Growth Analysis by Continent
+Examine how the population in each continent has changed over time.
+
+Approach:
+Summarize total population by continent and year.
+Plot population growth trends for each continent.
+
+gapminder %>%
+  group_by(continent, year) %>%
+  summarise(total_population = sum(pop)) %>%
+  ggplot(aes(x = year, y = total_population, color = continent)) +
+  geom_line() +
+  labs(title = "Population Growth by Continent", x = "Year", y = "Total Population") +
+  theme_minimal()
+
+
+4. Distribution of Life Expectancy Across Continents for a Specific Year
+This analysis will show the distribution and variation of life expectancy within continents for a given year.
+
+Approach:
+Filter data for a specific year.
+Use a boxplot to display the distribution of life expectancy by continent.
+
+gapminder %>%
+  filter(year == 2007) %>%
+  ggplot(aes(x = continent, y = lifeExp, fill = continent)) +
+  geom_boxplot() +
+  labs(title = "Life Expectancy Distribution by Continent in 2007", x = "Continent", y = "Life Expectancy") +
+  theme_minimal()
+
+5. Economic Growth Over Time
+Analyze how the GDP per capita has evolved over time for different countries or continents, highlighting economic growth patterns.
+
+Approach:
+Calculate the average GDP per capita for each year and continent.
+Plot these averages over time to observe trends.
+
+gapminder %>%
+  group_by(year, continent) %>%
+  summarise(average_gdpPercap = mean(gdpPercap, na.rm = TRUE)) %>%
+  ggplot(aes(x = year, y = average_gdpPercap, color = continent)) +
+  geom_line() +
+  labs(title = "Average GDP per Capita Over Time by Continent", x = "Year", y = "Average GDP per Capita") +
+  theme_minimal()
+
+6. Correlation between Population Growth and GDP per Capita
+Investigate if there's a correlation between population growth rates and GDP per capita changes, which could suggest how economic conditions affect population dynamics.
+
+Approach:
+Calculate yearly growth rates for both population and GDP per capita.
+Use scatter plots or correlation tests to explore relationships between these variables.
+
+gapminder_growth <- gapminder %>%
+  group_by(country) %>%
+  arrange(year) %>%
+  mutate(pop_growth_rate = (lead(pop) - pop) / pop * 100,
+         gdp_growth_rate = (lead(gdpPercap) - gdpPercap) / gdpPercap * 100) %>%
+  filter(!is.na(pop_growth_rate) & !is.na(gdp_growth_rate))
+ 
+# Scatter plot with correlation line
+ggplot(gapminder_growth, aes(x = pop_growth_rate, y = gdp_growth_rate)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", color = "blue") +
+  labs(title = "Correlation between Population Growth and GDP Growth",
+       x = "Population Growth Rate (%)",
+       y = "GDP Growth Rate (%)") +
+  theme_minimal()
+
+
+7. Impact of Health on Economic Development
+Explore how health indicators, such as life expectancy, correlate with economic indicators like GDP per capita across countries.
+
+Approach:
+Perform a correlation analysis or linear regression between life expectancy and GDP per capita to assess the relationship strength and direction.
+Visualize the relationship with scatter plots, possibly adding trend lines to highlight patterns.
+
+library(ggplot2)
+library(dplyr)
+ 
+gapminder %>%
+  ggplot(aes(x = lifeExp, y = gdpPercap)) +
+  geom_point(aes(color = continent)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Life Expectancy vs GDP per Capita", x = "Life Expectancy", y = "GDP per Capita") +
+  theme_minimal()
+
+8. Life Expectancy and GDP per Capita Clusters
+Use cluster analysis to identify groups of countries with similar life expectancy and GDP per capita characteristics, which can reveal patterns in global development levels.
+
+Approach:
+Utilize clustering techniques like K-means on life expectancy and GDP per capita.
+Visualize the clusters using scatter plots or multidimensional scaling (MDS).
+
+# Sample for K-means clustering (Pseudo-code, adjust as necessary)
+library(cluster)
+data_filtered <- gapminder %>% filter(year == 2007) %>% select(lifeExp, gdpPercap) %>% na.omit()
+clusters <- kmeans(data_filtered, centers = 3)
+ggplot(data_filtered, aes(x = lifeExp, y = gdpPercap, color = as.factor(clusters$cluster))) + geom_point()
+
+
+9. Comparative Analysis of Continents
+Perform a comparative analysis of continents across various indicators to understand differences in development, health outcomes, and economic conditions.
+
+Approach:
+Use data visualization techniques like facet plots to compare trends across continents.
+Analyze disparities and similarities in development indicators.
+
+# GDP per capita by continent over time
+gapminder %>%
+  group_by(year, continent) %>%
+  summarise(average_gdpPercap = mean(gdpPercap, na.rm = TRUE)) %>%
+  ggplot(aes(x = year, y = average_gdpPercap, color = continent)) +
+  geom_line() +
+  labs(title = "Average GDP per Capita Over Time by Continent", x = "Year", y = "Average GDP per Capita") +
+  theme_minimal()
+ 
+# Life expectancy by continent over time
+gapminder %>%
+  group_by(year, continent) %>%
+  summarise(average_lifeExp = mean(lifeExp, na.rm = TRUE)) %>%
+  ggplot(aes(x = year, y = average_lifeExp, color = continent)) +
+  geom_line() +
+  labs(title = "Average Life Expectancy Over Time by Continent", x = "Year", y = "Average Life Expectancy") +
+  theme_minimal()
+
+
+
+10. Life Expectancy and GDP per Capita over Time by Continent
+
+gapminder %>%
+  ggplot(aes(x = year, y = lifeExp, color = continent)) +
+  geom_line() + # Line plot for life expectancy trends
+  geom_point(aes(size = gdpPercap), show.legend = FALSE) + # Point size represents GDP per capita
+  facet_wrap(~continent, scales = "free_y") + # Faceting by continent, allowing y-axis to vary
+  labs(title = "Life Expectancy and GDP per Capita over Time by Continent",
+       x = "Year",
+       y = "Life Expectancy",
+       size = "GDP per Capita") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+Comparison of GDP per Capita Growth Between Selected Countries
+
+# Selected countries for comparison
+selected_countries <- c("United States", "China", "India", "Germany", "Brazil")
+ 
+gapminder %>%
+  filter(country %in% selected_countries) %>%
+  ggplot(aes(x = year, y = gdpPercap, color = country)) +
+  geom_line() +
+  labs(title = "GDP per Capita Growth Comparison",
+       x = "Year",
+       y = "GDP per Capita (US$)") +
+  theme_minimal() +
+  theme(legend.title = element_blank())
+
+Continent-Wise Population Growth Trends
+
+gapminder %>%
+  group_by(year, continent) %>%
+  summarise(total_population = sum(pop)) %>%
+  ggplot(aes(x = year, y = total_population, color = continent)) +
+  geom_line() +
+  labs(title = "Continent-Wise Population Growth Trends",
+       x = "Year",
+       y = "Total Population") +
+  theme_minimal() +
+  theme(legend.title = element_blank())
+
+Comparative Analysis of Life Expectancy vs. GDP per Capita by Continent
+
+gapminder %>%
+  ggplot(aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point(alpha = 0.5) +
+  scale_x_log10() + # Log scale for GDP per Capita to handle wide data range
+  facet_wrap(~continent) +
+  labs(title = "Life Expectancy vs. GDP per Capita by Continent",
+       x = "GDP per Capita (Log Scale)",
+       y = "Life Expectancy") +
+  theme_minimal() +
+  theme(legend.title = element_blank())
+
+ 
+Yearly Comparison of Average Life Expectancy Between Two Continents
+
+# Filtering for two continents for comparison
+two_continents <- gapminder %>%
+  filter(continent %in% c("Europe", "Asia"))
+ 
+two_continents %>%
+  group_by(year, continent) %>%
+  summarise(average_lifeExp = mean(lifeExp)) %>%
+  ggplot(aes(x = year, y = average_lifeExp, color = continent)) +
+  geom_line() +
+  labs(title = "Average Life Expectancy: Europe vs. Asia",
+       x = "Year",
+       y = "Average Life Expectancy") +
+  theme_minimal() +
+  theme(legend.title = element_blank())
+
+
+Comparative Analysis: Countries with the Highest GDP per Capita by Continent
+This analysis aims to identify the country with the highest GDP per Capita within each continent for a specific year and then uses facets to compare these countries across different indicators such as life expectancy and population.
+
+Steps:
+
+1. Filter data for a specific year to simplify the analysis. Let's choose 2007, the last year in many datasets like Gapminder.
+
+2. Identify the country with the highest GDP per Capita within each continent for the selected year.
+
+3. Create a subset of the data that includes only these countries.
+4. Use facets to compare these countries across life expectancy and population in the year 2007.
+
+
+
+
+# Step 1: Filter data for the year 2007
+data_2007 <- gapminder %>%
+  filter(year == 2007)
+ 
+# Step 2: Identify the country with the highest GDP per Capita within each continent
+highest_gdp_country <- data_2007 %>%
+  group_by(continent) %>%
+  top_n(1, gdpPercap) %>%
+  ungroup()
+ 
+# Step 3: Comparative analysis using facets
+# Compare life expectancy and population for the countries with the highest GDP per Capita
+ggplot(highest_gdp_country, aes(x = country, y = lifeExp)) +
+  geom_col() +
+  facet_wrap(~continent, scales = "free_x") +
+  labs(title = "Countries with the Highest GDP per Capita by Continent in 2007",
+       x = "Country",
+       y = "Life Expectancy") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ 
+# For population comparison, simply change the y aesthetic to 'pop'
+ggplot(highest_gdp_country, aes(x = country, y = pop)) +
+  geom_col() +
+  facet_wrap(~continent, scales = "free_x") +
+  labs(title = "Population of Countries with the Highest GDP per Capita by Continent in 2007",
+       x = "Country",
+       y = "Population") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+11. Find the top 3 countries by continent with the most population change between 1952 and 2007
+
+# Calculate absolute population change and select top 3 countries per continent
+population_change <- gapminder %>%
+  filter(year %in% c(1952, 2007)) %>%
+  group_by(country, continent) %>%
+  summarize(start_pop = min(pop[year == 1952]), end_pop = max(pop[year == 2007]), .groups = 'drop') %>%
+  mutate(abs_pop_change = abs(end_pop - start_pop)) %>%
+  arrange(desc(abs_pop_change))
+ 
+# Identify top 3 countries in each continent with the highest absolute population changes
+top_changes_per_continent <- population_change %>%
+  group_by(continent) %>%
+  top_n(3, abs_pop_change) %>%
+  ungroup() %>%
+  arrange(continent, desc(abs_pop_change))
+ 
+# For visualization, we can plot the population change of these countries
+ggplot(top_changes_per_continent, aes(x = reorder(country, abs_pop_change), y = abs_pop_change, fill = continent)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Top 3 Countries with Highest Absolute Population Change by Continent (1952-2007)",
+       x = "Country",
+       y = "Absolute Population Change") +
+  facet_wrap(~continent) +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) # Adjusting the x-axis labels to be at a 60-degree angle
+
+
+To graph max, min, and mean Life expectancy for all the years by continent
+
+
+# Assuming gapminder is your dataset
+lifeExp_summary <- gapminder %>%
+  group_by(continent) %>%
+  summarise(
+    Min_LifeExp = min(lifeExp, na.rm = TRUE),
+    Mean_LifeExp = mean(lifeExp, na.rm = TRUE),
+    Max_LifeExp = max(lifeExp, na.rm = TRUE)
+  ) %>%
+  pivot_longer(cols = c(Min_LifeExp, Mean_LifeExp, Max_LifeExp), names_to = "Statistic", values_to = "LifeExp")
+ 
+# Plotting
+ggplot(lifeExp_summary, aes(x = continent, y = LifeExp, fill = Statistic)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Life Expectancy Statistics by Continent",
+       x = "Continent", y = "Life Expectancy") +
+  scale_fill_brewer(palette = "Pastel1") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+Find top 5 countries by population in each continent for a particular year
+
+gapminder %>%
+  filter(year == 2007) %>%
+  arrange(desc(pop)) %>%
+  group_by(continent) %>%
+  mutate(rank = row_number()) %>%
+  filter(rank <= 5)
+
+link to resource: [Rebecca Barter's](http://www.rebeccabarter.com/blog/2017-11-17-ggplot2_tutorial/)
+
+
+Use of Pivot_wider to make the table wide
+
+gapminder %>%
+  filter(year == 1952 | year == 2007) %>%
+  pivot_wider(names_from = year, values_from = pop, names_prefix = "pop") %>%
+  group_by(country) %>%
+  summarize(across(starts_with("pop"), sum, na.rm = TRUE), .groups = "drop")%>%
+  mutate(popgrowth=pop2007 -pop1952) %>%
+  arrange(desc(popgrowth))
+
+The above shows countries with the largest population growth since 1952
+
+If you want countries with largest GDP growth since 1952, you can use the following
+gapminder %>%
+  filter(year == 1952 | year == 2007) %>%
+  pivot_wider(names_from = year, values_from = gdpPercap, names_prefix = "gdp") %>%
+  group_by(country) %>%
+  summarize(across(starts_with("gdp"), sum, na.rm = TRUE), .groups = "drop")%>%
+  mutate(gdpgrowth=gdp2007 -gdp1952) %>%
+  arrange(desc(gdpgrowth) %>%
+  top_n(5) %>%
+  ggplot(aes(x=country, y=gdpgrowth, fill=country)) +
+  geom_col()
+
+If you want to filter a set of values use %in% like the following
+
+filter(country %in% c("Brazil", "China", "India", "Indonesia", "United States")
