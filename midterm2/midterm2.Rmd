@@ -147,9 +147,8 @@ white_sharks %>%
 white_sharks %>%
   filter(total_length_cm!="NA") %>%
   group_by(sex, na.rm= T) %>%
-  summarise(mean_total_length_cm=mean(total_length_cm)) %>%
-  ggplot(aes(x= sex, y=mean_total_length_cm))+
-  geom_col()
+  ggplot(aes(x= sex, y=total_length_cm))+
+  geom_boxplot()
 ```
 
 
