@@ -1,0 +1,7 @@
+"  Accession","   Family","   Genus","  Country","   State","   County","  Locality","    Date"," Collector","   Latitude","  Longitude"
+"Min.   : 9034549  ","Length:270        ","Length:270        ","Length:270        ","Length:270        ","Length:270        ","Length:270        ","Length:270        ","Length:270        ","Min.   :34.67  ","Min.   :-124.1  "
+"1st Qu.: 9038573  ","Class :character  ","Class :character  ","Class :character  ","Class :character  ","Class :character  ","Class :character  ","Class :character  ","Class :character  ","1st Qu.:37.88  ","1st Qu.:-122.5  "
+"Median : 9038644  ","Mode  :character  ","Mode  :character  ","Mode  :character  ","Mode  :character  ","Mode  :character  ","Mode  :character  ","Mode  :character  ","Mode  :character  ","Median :38.19  ","Median :-122.1  "
+"Mean   : 9641191  ",NA,NA,NA,NA,NA,NA,NA,NA,"Mean   :38.49  ","Mean   :-121.6  "
+"3rd Qu.: 9038718  ",NA,NA,NA,NA,NA,NA,NA,NA,"3rd Qu.:38.88  ","3rd Qu.:-120.5  "
+"Max.   :90387441  ",NA,NA,NA,NA,NA,NA,NA,NA,"Max.   :44.51  ","Max.   :-115.5  "
